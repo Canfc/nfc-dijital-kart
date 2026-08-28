@@ -26,28 +26,28 @@ export default function Home() {
         <div className="mt-8 space-y-3">
 
           <a
-            href="https://search.google.com/local/writereview?placeid=ChIJyYGHXZ9RyxQRX40H3drSp_w"
+            href="/click?link=google"
             className="block rounded-2xl bg-white px-5 py-4 text-center font-bold text-black shadow-lg"
           >
             ⭐ Google&apos;da Yorum Yap
           </a>
 
           <a
-            href="https://instagram.com/kebapciali41"
+            href="/click?link=instagram"
             className="block rounded-2xl bg-[#1f1f1f] px-5 py-4 text-center font-semibold text-white shadow"
           >
             📸 Instagram
           </a>
 
           <a
-            href="https://maps.app.goo.gl/59PaBgfnFYpoxQSUA?g_st=ic"
+            href="/click?link=konum"
             className="block rounded-2xl bg-[#1f1f1f] px-5 py-4 text-center font-semibold text-white shadow"
           >
             📍 Konum
           </a>
 
           <a
-            href="tel:+905472832727"
+            href="/click?link=telefon"
             className="block rounded-2xl bg-[#1f1f1f] px-5 py-4 text-center font-semibold text-white shadow"
           >
             📞 Bizi Ara
