@@ -15,7 +15,7 @@ export default function Home() {
           </h1>
 
           <p className="mt-2 text-sm text-gray-300">
-            Kebap • Pide • Lahmacun
+            Kebap Ve Dürüm Çeşitleri
           </p>
 
           <p className="mt-3 text-sm text-gray-400">
@@ -56,7 +56,7 @@ export default function Home() {
         </div>
 
         <p className="mt-8 text-center text-xs text-gray-500">
-          NFC ile hızlıca bağlantı kurun
+          AFİYET OLSUN
         </p>
 
       </div>
