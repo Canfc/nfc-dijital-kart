@@ -1,8 +1,56 @@
 import { createClient } from "@supabase/supabase-js";
+import { cookies } from "next/headers";
 
 export const dynamic = "force-dynamic";
 
 export default async function IstatistikPage() {
+  const cookieStore = await cookies();
+  const adminSession = cookieStore.get("admin_session")?.value;
+
+  if (adminSession !== "authenticated") {
+    return (
+      <main
+        style={{
+          maxWidth: "400px",
+          margin: "100px auto",
+          padding: "30px",
+          fontFamily: "Arial, sans-serif",
+        }}
+      >
+        <h1>Kebapçı Ali</h1>
+        <h2>İstatistik Girişi</h2>
+
+        <form action="/api/admin-login" method="POST">
+          <input
+            type="password"
+            name="password"
+            placeholder="Şifrenizi girin"
+            required
+            style={{
+              width: "100%",
+              padding: "14px",
+              marginTop: "20px",
+              boxSizing: "border-box",
+            }}
+          />
+
+          <button
+            type="submit"
+            style={{
+              width: "100%",
+              padding: "14px",
+              marginTop: "12px",
+              cursor: "pointer",
+              fontWeight: "bold",
+            }}
+          >
+            Giriş Yap
+          </button>
+        </form>
+      </main>
+    );
+  }
+
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_PUBLISHABLE_KEY!
@@ -75,6 +123,7 @@ export default async function IstatistikPage() {
       <hr />
 
       <h3>👥 Tekil Ziyaretçi</h3>
+
       <div
         style={{
           fontSize: "52px",
