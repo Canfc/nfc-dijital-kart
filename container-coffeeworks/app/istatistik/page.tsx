@@ -7,6 +7,7 @@ export default async function IstatistikPage() {
   const cookieStore = await cookies();
   const adminSession = cookieStore.get("admin_session")?.value;
 
+  // Şifre kontrolü
   if (adminSession !== "authenticated") {
     return (
       <main
@@ -58,19 +59,7 @@ export default async function IstatistikPage() {
 
   const business = "Container Coffee Works";
 
-  const { count: visitorCount } = await supabase
-    .from("visits")
-    .select("*", { count: "exact", head: true })
-    .eq("business", business);
-
-  const { data: lastVisit } = await supabase
-    .from("visits")
-    .select("turkiye_saati")
-    .eq("business", business)
-    .order("turkiye_saati", { ascending: false })
-    .limit(1)
-    .maybeSingle();
-
+  // Önce aktif sayaç dönemini öğreniyoruz
   const { data: settings } = await supabase
     .from("counter_settings")
     .select("counter_version")
@@ -79,6 +68,24 @@ export default async function IstatistikPage() {
 
   const currentVersion = settings?.counter_version ?? 1;
 
+  // Sadece aktif dönemin ziyaretçilerini say
+  const { count: visitorCount } = await supabase
+    .from("visits")
+    .select("*", { count: "exact", head: true })
+    .eq("business", business)
+    .eq("counter_version", currentVersion);
+
+  // Sadece aktif dönemin son ziyaretini göster
+  const { data: lastVisit } = await supabase
+    .from("visits")
+    .select("turkiye_saati")
+    .eq("business", business)
+    .eq("counter_version", currentVersion)
+    .order("turkiye_saati", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  // Sadece aktif dönemin link tıklamaları
   const { data: clicks } = await supabase
     .from("link_clicks")
     .select("link_name")
@@ -86,19 +93,22 @@ export default async function IstatistikPage() {
     .eq("counter_version", currentVersion);
 
   const googleCount =
-    clicks?.filter((x) => x.link_name === "google").length ?? 0;
+    clicks?.filter((item) => item.link_name === "google").length ?? 0;
 
   const instagramCount =
-    clicks?.filter((x) => x.link_name === "instagram").length ?? 0;
+    clicks?.filter((item) => item.link_name === "instagram").length ?? 0;
 
   const konumCount =
-    clicks?.filter((x) => x.link_name === "konum").length ?? 0;
+    clicks?.filter((item) => item.link_name === "konum").length ?? 0;
 
   const telefonCount =
-    clicks?.filter((x) => x.link_name === "telefon").length ?? 0;
+    clicks?.filter((item) => item.link_name === "telefon").length ?? 0;
 
   const sonZiyaret = lastVisit?.turkiye_saati
-    ? new Date(lastVisit.turkiye_saati).toLocaleString("tr-TR")
+    ? new Date(lastVisit.turkiye_saati).toLocaleString("tr-TR", {
+        dateStyle: "short",
+        timeStyle: "medium",
+      })
     : "Henüz ziyaret yok";
 
   return (
@@ -116,11 +126,19 @@ export default async function IstatistikPage() {
       <hr />
 
       <h3>👥 Tekil Ziyaretçi</h3>
-      <div style={{ fontSize: "52px", fontWeight: "bold" }}>
+
+      <div
+        style={{
+          fontSize: "52px",
+          fontWeight: "bold",
+          marginBottom: "30px",
+        }}
+      >
         {visitorCount ?? 0}
       </div>
 
       <h3>🔗 Link Etkileşimleri</h3>
+
       <p>⭐ Google Yorum: {googleCount}</p>
       <p>📸 Instagram: {instagramCount}</p>
       <p>📍 Konum: {konumCount}</p>
