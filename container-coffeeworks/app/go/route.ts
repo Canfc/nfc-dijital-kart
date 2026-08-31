@@ -36,10 +36,11 @@ export async function GET(request: NextRequest) {
 
   const visitorId = existingVisitorId || crypto.randomUUID();
 
-  const { error } = await supabase.from("visits").insert({
-    business,
-    visitor_id: `${visitorId}_v${currentVersion}`,
-  });
+ const { error } = await supabase.from("visits").insert({
+  business,
+  visitor_id: `${visitorId}_v${currentVersion}`,
+  counter_version: currentVersion,
+});
 
   if (error) {
     console.error("Sayaç hatası:", error);
