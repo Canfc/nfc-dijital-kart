@@ -161,4 +161,4 @@ export default async function IstatistikPage() {
       </form>
     </main>
   );
-}
+}src="/st-lounge-panel.png"
