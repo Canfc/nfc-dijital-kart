@@ -58,22 +58,7 @@ export default async function IstatistikPage() {
 
   const business = "Kebapçı Ali";
 
-  // Tekil ziyaretçi sayısı
-  const { count: visitorCount } = await supabase
-    .from("visits")
-    .select("*", { count: "exact", head: true })
-    .eq("business", business);
-
-  // Son ziyaret
-  const { data: lastVisit } = await supabase
-    .from("visits")
-    .select("turkiye_saati")
-    .eq("business", business)
-    .order("turkiye_saati", { ascending: false })
-    .limit(1)
-    .maybeSingle();
-
-  // Sayaç dönemi
+  // Aktif sayaç dönemi
   const { data: settings } = await supabase
     .from("counter_settings")
     .select("counter_version")
@@ -82,7 +67,24 @@ export default async function IstatistikPage() {
 
   const currentVersion = settings?.counter_version ?? 1;
 
-  // Link tıklamaları
+  // Sadece aktif dönemin ziyaretçileri
+  const { count: visitorCount } = await supabase
+    .from("visits")
+    .select("*", { count: "exact", head: true })
+    .eq("business", business)
+    .eq("counter_version", currentVersion);
+
+  // Aktif dönemin son ziyareti
+  const { data: lastVisit } = await supabase
+    .from("visits")
+    .select("turkiye_saati")
+    .eq("business", business)
+    .eq("counter_version", currentVersion)
+    .order("turkiye_saati", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  // Aktif dönemin link tıklamaları
   const { data: clicks } = await supabase
     .from("link_clicks")
     .select("link_name")
@@ -148,4 +150,21 @@ export default async function IstatistikPage() {
       <p>{currentVersion}</p>
     </main>
   );
-}
+}<form action="/api/reset-counter" method="POST">
+  <button
+    type="submit"
+    style={{
+      marginTop: "20px",
+      padding: "14px 22px",
+      backgroundColor: "#111111",
+      color: "#ffffff",
+      border: "none",
+      borderRadius: "12px",
+      cursor: "pointer",
+      fontWeight: "bold",
+      fontSize: "16px",
+    }}
+  >
+    Sayacı Sıfırla
+  </button>
+</form>
