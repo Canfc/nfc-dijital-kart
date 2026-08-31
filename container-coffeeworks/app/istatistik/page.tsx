@@ -59,7 +59,7 @@ export default async function IstatistikPage() {
 
   const business = "Container Coffee Works";
 
-  // Önce aktif sayaç dönemini öğreniyoruz
+  // Aktif sayaç dönemini öğren
   const { data: settings } = await supabase
     .from("counter_settings")
     .select("counter_version")
@@ -68,14 +68,14 @@ export default async function IstatistikPage() {
 
   const currentVersion = settings?.counter_version ?? 1;
 
-  // Sadece aktif dönemin ziyaretçilerini say
+  // Sadece aktif dönemin ziyaretçileri
   const { count: visitorCount } = await supabase
     .from("visits")
     .select("*", { count: "exact", head: true })
     .eq("business", business)
     .eq("counter_version", currentVersion);
 
-  // Sadece aktif dönemin son ziyaretini göster
+  // Aktif dönemin son ziyareti
   const { data: lastVisit } = await supabase
     .from("visits")
     .select("turkiye_saati")
@@ -85,7 +85,7 @@ export default async function IstatistikPage() {
     .limit(1)
     .maybeSingle();
 
-  // Sadece aktif dönemin link tıklamaları
+  // Aktif dönemin link tıklamaları
   const { data: clicks } = await supabase
     .from("link_clicks")
     .select("link_name")
@@ -149,6 +149,25 @@ export default async function IstatistikPage() {
 
       <h3>🔄 Sayaç Dönemi</h3>
       <p>{currentVersion}</p>
+
+      <form action="/api/reset-counter" method="POST">
+        <button
+          type="submit"
+          style={{
+            marginTop: "20px",
+            padding: "14px 22px",
+            backgroundColor: "#3c2a1d",
+            color: "#ffffff",
+            border: "none",
+            borderRadius: "12px",
+            cursor: "pointer",
+            fontWeight: "bold",
+            fontSize: "16px",
+          }}
+        >
+          Sayacı Sıfırla
+        </button>
+      </form>
     </main>
   );
 }
