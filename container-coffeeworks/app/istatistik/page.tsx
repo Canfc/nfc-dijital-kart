@@ -165,11 +165,58 @@ export default async function IstatistikPage() {
 
   const currentVersion = settings?.counter_version ?? 1;
 
+  /* =========================
+     TOPLAM ZİYARETÇİ
+  ========================= */
+
   const { count: visitorCount } = await supabase
     .from("visits")
     .select("*", { count: "exact", head: true })
     .eq("business", business)
     .eq("counter_version", currentVersion);
+
+  /* =========================
+     KART BAZLI SAYAÇLAR
+  ========================= */
+
+  const { count: con01Count } = await supabase
+    .from("visits")
+    .select("*", { count: "exact", head: true })
+    .eq("business", business)
+    .eq("counter_version", currentVersion)
+    .eq("card_code", "CON01");
+
+  const { count: con02Count } = await supabase
+    .from("visits")
+    .select("*", { count: "exact", head: true })
+    .eq("business", business)
+    .eq("counter_version", currentVersion)
+    .eq("card_code", "CON02");
+
+  const { count: con03Count } = await supabase
+    .from("visits")
+    .select("*", { count: "exact", head: true })
+    .eq("business", business)
+    .eq("counter_version", currentVersion)
+    .eq("card_code", "CON03");
+
+  const { count: con04Count } = await supabase
+    .from("visits")
+    .select("*", { count: "exact", head: true })
+    .eq("business", business)
+    .eq("counter_version", currentVersion)
+    .eq("card_code", "CON04");
+
+  const { count: con05Count } = await supabase
+    .from("visits")
+    .select("*", { count: "exact", head: true })
+    .eq("business", business)
+    .eq("counter_version", currentVersion)
+    .eq("card_code", "CON05");
+
+  /* =========================
+     SON ZİYARET
+  ========================= */
 
   const { data: lastVisit } = await supabase
     .from("visits")
@@ -179,6 +226,10 @@ export default async function IstatistikPage() {
     .order("turkiye_saati", { ascending: false })
     .limit(1)
     .maybeSingle();
+
+  /* =========================
+     LINK TIKLAMALARI
+  ========================= */
 
   const { data: clicks } = await supabase
     .from("link_clicks")
@@ -198,15 +249,15 @@ export default async function IstatistikPage() {
   const telefonCount =
     clicks?.filter((item) => item.link_name === "telefon").length ?? 0;
 
+  const totalInteractions =
+    googleCount + instagramCount + konumCount + telefonCount;
+
   const sonZiyaret = lastVisit?.turkiye_saati
     ? new Date(lastVisit.turkiye_saati).toLocaleString("tr-TR", {
         dateStyle: "short",
         timeStyle: "medium",
       })
     : "Henüz ziyaret yok";
-
-  const totalInteractions =
-    googleCount + instagramCount + konumCount + telefonCount;
 
   return (
     <main
@@ -228,6 +279,7 @@ export default async function IstatistikPage() {
         }}
       >
         {/* BAŞLIK */}
+
         <header style={{ marginBottom: "26px" }}>
           <div
             style={{
@@ -287,11 +339,12 @@ export default async function IstatistikPage() {
               lineHeight: 1.5,
             }}
           >
-            NFC kartınızın güncel ziyaret ve bağlantı etkileşimleri.
+            Beş NFC kartın toplam ve ayrı ayrı ziyaret performansı.
           </p>
         </header>
 
-        {/* ZİYARETÇİ */}
+        {/* TOPLAM ZİYARET */}
+
         <section
           style={{
             padding: "24px",
@@ -300,7 +353,6 @@ export default async function IstatistikPage() {
               "linear-gradient(135deg, #1c1b17 0%, #15181c 55%, #111315 100%)",
             border: "1px solid #554521",
             boxShadow: "0 20px 50px rgba(0,0,0,0.25)",
-            marginBottom: "18px",
           }}
         >
           <div
@@ -321,7 +373,7 @@ export default async function IstatistikPage() {
                   letterSpacing: "0.12em",
                 }}
               >
-                TEKİL ZİYARETÇİ
+                TOPLAM TEKİL ZİYARET
               </p>
 
               <div
@@ -349,7 +401,7 @@ export default async function IstatistikPage() {
                 fontWeight: "700",
               }}
             >
-              Aktif
+              5 Kart Aktif
             </div>
           </div>
 
@@ -415,14 +467,53 @@ export default async function IstatistikPage() {
           </div>
         </section>
 
-        {/* ETKİLEŞİMLER */}
+        {/* KART BAZLI SAYAÇLAR */}
+
+        <div style={{ margin: "30px 2px 14px" }}>
+          <h2
+            style={{
+              margin: 0,
+              color: "#ffffff",
+              fontSize: "18px",
+            }}
+          >
+            Kart Performansı
+          </h2>
+
+          <p
+            style={{
+              margin: "6px 0 0",
+              color: "#8e96a1",
+              fontSize: "12px",
+            }}
+          >
+            Her fiziksel NFC kartın ayrı ziyaret sayısı
+          </p>
+        </div>
+
+        <section
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(135px, 1fr))",
+            gap: "12px",
+          }}
+        >
+          <CardStat code="CON01" title="Kart 1" value={con01Count ?? 0} />
+          <CardStat code="CON02" title="Kart 2" value={con02Count ?? 0} />
+          <CardStat code="CON03" title="Kart 3" value={con03Count ?? 0} />
+          <CardStat code="CON04" title="Kart 4" value={con04Count ?? 0} />
+          <CardStat code="CON05" title="Kart 5" value={con05Count ?? 0} />
+        </section>
+
+        {/* LINK ETKİLEŞİMLERİ */}
+
         <div
           style={{
             display: "flex",
             justifyContent: "space-between",
             alignItems: "end",
             gap: "15px",
-            margin: "28px 2px 13px",
+            margin: "32px 2px 13px",
           }}
         >
           <div>
@@ -443,7 +534,7 @@ export default async function IstatistikPage() {
                 fontSize: "12px",
               }}
             >
-              Ziyaretçilerin bağlantı tercihleri
+              Tüm Container kartlarının toplam etkileşimleri
             </p>
           </div>
 
@@ -472,6 +563,7 @@ export default async function IstatistikPage() {
         </section>
 
         {/* SON ZİYARET */}
+
         <section
           style={{
             marginTop: "18px",
@@ -506,6 +598,7 @@ export default async function IstatistikPage() {
         </section>
 
         {/* SAYAÇ YÖNETİMİ */}
+
         <section
           style={{
             marginTop: "28px",
@@ -534,7 +627,8 @@ export default async function IstatistikPage() {
               lineHeight: 1.5,
             }}
           >
-            Sayaç sıfırlandığında yeni bir istatistik dönemi başlatılır.
+            Sayaç sıfırlandığında beş kartın tamamı için yeni bir istatistik
+            dönemi başlatılır.
           </p>
 
           <form action="/api/reset-counter" method="POST">
@@ -552,7 +646,7 @@ export default async function IstatistikPage() {
                 fontSize: "14px",
               }}
             >
-              Sayacı Sıfırla
+              Tüm Sayaçları Sıfırla
             </button>
           </form>
         </section>
@@ -565,12 +659,85 @@ export default async function IstatistikPage() {
             fontSize: "11px",
           }}
         >
-          Container Coffee Works • NFC İstatistik Sistemi
+          Container Coffee Works • 5 Kart NFC İstatistik Sistemi
         </footer>
       </div>
     </main>
   );
 }
+
+/* =========================
+   KART SAYAÇ BİLEŞENİ
+========================= */
+
+function CardStat({
+  code,
+  title,
+  value,
+}: {
+  code: string;
+  title: string;
+  value: number;
+}) {
+  return (
+    <div
+      style={{
+        padding: "18px",
+        borderRadius: "17px",
+        background:
+          "linear-gradient(145deg, #1c1a15 0%, #14171b 70%)",
+        border: "1px solid #4a3c20",
+      }}
+    >
+      <div
+        style={{
+          color: "#d4a853",
+          fontSize: "11px",
+          fontWeight: "800",
+          letterSpacing: "0.1em",
+        }}
+      >
+        {code}
+      </div>
+
+      <div
+        style={{
+          color: "#9ea6b1",
+          fontSize: "12px",
+          marginTop: "5px",
+        }}
+      >
+        {title}
+      </div>
+
+      <div
+        style={{
+          color: "#ffffff",
+          fontSize: "32px",
+          lineHeight: 1,
+          fontWeight: "800",
+          marginTop: "14px",
+        }}
+      >
+        {value}
+      </div>
+
+      <div
+        style={{
+          color: "#707782",
+          fontSize: "10px",
+          marginTop: "7px",
+        }}
+      >
+        tekil ziyaret
+      </div>
+    </div>
+  );
+}
+
+/* =========================
+   LINK İSTATİSTİĞİ
+========================= */
 
 function StatCard({
   icon,
