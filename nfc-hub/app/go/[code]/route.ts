@@ -1,108 +1,78 @@
-import {
-  NextRequest,
-  NextResponse,
-} from "next/server";
-
-import {
-  createAdminClient,
-} from "../../../lib/supabase-admin";
+import { NextRequest, NextResponse } from "next/server";
+import { createClient } from "@supabase/supabase-js";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export async function GET(
   request: NextRequest,
-  context: {
-    params: Promise<{
-      code: string;
-    }>;
-  }
+  context: { params: Promise<{ code: string }> }
 ) {
   const { code } = await context.params;
 
-  const normalizedCode =
-    code.trim().toUpperCase();
+  const normalizedCode = code.trim().toUpperCase();
 
-  if (!normalizedCode) {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const secretKey = process.env.SUPABASE_SECRET_KEY;
+
+  if (!supabaseUrl || !secretKey) {
     return NextResponse.json(
-      {
-        error: "Geçersiz NFC kodu.",
-      },
-      {
-        status: 400,
-      }
+      { error: "Supabase environment variables eksik." },
+      { status: 500 }
     );
   }
 
-  const supabase =
-    createAdminClient();
+  const supabase = createClient(
+    supabaseUrl,
+    secretKey,
+    {
+      auth: {
+        persistSession: false,
+        autoRefreshToken: false,
+      },
+    }
+  );
 
-  const {
-    data: route,
-    error,
-  } = await supabase
+  const { data, error } = await supabase
     .from("nfc_routes")
-    .select(
-      "business, destination_url, active"
-    )
+    .select("code, business, destination_url, active")
     .eq("code", normalizedCode)
     .maybeSingle();
 
   if (error) {
-    console.error(
-      "NFC yönlendirme hatası:",
-      error
-    );
+    console.error("Supabase yönlendirme hatası:", error);
 
     return NextResponse.json(
-      {
-        error:
-          "Yönlendirme servisine ulaşılamadı.",
-      },
-      {
-        status: 500,
-      }
+      { error: "Yönlendirme kaydı okunamadı." },
+      { status: 500 }
     );
   }
 
-  if (
-    !route ||
-    !route.active ||
-    !route.destination_url
-  ) {
+  if (!data) {
     return NextResponse.json(
-      {
-        error:
-          "NFC kart bulunamadı veya pasif.",
-      },
-      {
-        status: 404,
-      }
+      { error: "Bu NFC kodu bulunamadı." },
+      { status: 404 }
     );
   }
 
-  if (
-    !route.destination_url.startsWith(
-      "https://"
-    )
-  ) {
-    console.error(
-      "Geçersiz destination:",
-      normalizedCode
-    );
-
+  if (!data.active) {
     return NextResponse.json(
-      {
-        error:
-          "Geçersiz yönlendirme.",
-      },
-      {
-        status: 500,
-      }
+      { error: "Bu NFC kart şu anda pasif." },
+      { status: 404 }
     );
   }
 
-  return NextResponse.redirect(
-    route.destination_url,
-    307
-  );
+  if (!data.destination_url.startsWith("https://")) {
+    return NextResponse.json(
+      { error: "Geçersiz hedef URL." },
+      { status: 500 }
+    );
+  }
+
+  return NextResponse.redirect(data.destination_url, {
+    status: 307,
+    headers: {
+      "Cache-Control": "no-store, no-cache, must-revalidate",
+    },
+  });
 }
