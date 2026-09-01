@@ -2,22 +2,23 @@ export default function Home() {
   return (
     <main
       style={{
-        margin: 0,
-        minHeight: "100dvh",
-        backgroundColor: "#050505",
-        display: "flex",
-        justifyContent: "center",
+        position: "fixed",
+        inset: 0,
+        width: "100%",
+        height: "100dvh",
         overflow: "hidden",
+        backgroundColor: "#050505",
       }}
     >
       <div
         style={{
           position: "relative",
           width: "100%",
+          height: "100%",
           maxWidth: "430px",
-          aspectRatio: "941 / 1672",
-          backgroundColor: "#050505",
+          margin: "0 auto",
           overflow: "hidden",
+          backgroundColor: "#050505",
         }}
       >
         {/* ANA PANEL */}
@@ -34,52 +35,16 @@ export default function Home() {
           }}
         />
 
-        {/* ORİJİNAL PROFİL FOTOĞRAFI */}
-        <div
-          style={{
-            position: "absolute",
-
-            // Altın profil çemberinin iç alanı
-            top: "4.7%",
-            left: "32.4%",
-            width: "35.2%",
-            aspectRatio: "1 / 1",
-
-            borderRadius: "50%",
-            overflow: "hidden",
-
-            // Paneldeki altın halkayı görünür bırak
-            boxShadow: "0 0 0 2px rgba(215, 165, 75, 0.95)",
-
-            zIndex: 10,
-          }}
-        >
-          <img
-            src="/yemliha-gerek-profile.jpg"
-            alt="Yemliha Gerek"
-            style={{
-              width: "100%",
-              height: "100%",
-              display: "block",
-
-              // Fotoğrafın kendisi değişmez,
-              // sadece daire içine kırpılır.
-              objectFit: "cover",
-              objectPosition: "center 48%",
-            }}
-          />
-        </div>
-
         {/* YEMLİHA GEREK */}
         <a
           href="/click?link=yemlihagerek"
           aria-label="Yemliha Gerek Instagram"
           style={{
             position: "absolute",
-            left: "9%",
-            top: "35.2%",
-            width: "82%",
-            height: "8.4%",
+            left: "12%",
+            top: "41.3%",
+            width: "76%",
+            height: "8.6%",
             zIndex: 20,
           }}
         />
@@ -90,10 +55,10 @@ export default function Home() {
           aria-label="Çadır Keyfi"
           style={{
             position: "absolute",
-            left: "9%",
-            top: "47.5%",
-            width: "82%",
-            height: "5.9%",
+            left: "12%",
+            top: "53.3%",
+            width: "76%",
+            height: "5.7%",
             zIndex: 20,
           }}
         />
@@ -104,10 +69,10 @@ export default function Home() {
           aria-label="Marmara Fest"
           style={{
             position: "absolute",
-            left: "9%",
-            top: "54%",
-            width: "82%",
-            height: "5.9%",
+            left: "12%",
+            top: "59.4%",
+            width: "76%",
+            height: "5.7%",
             zIndex: 20,
           }}
         />
@@ -118,10 +83,10 @@ export default function Home() {
           aria-label="Kocaeli Planı"
           style={{
             position: "absolute",
-            left: "9%",
-            top: "60.4%",
-            width: "82%",
-            height: "5.9%",
+            left: "12%",
+            top: "65.5%",
+            width: "76%",
+            height: "5.7%",
             zIndex: 20,
           }}
         />
@@ -132,15 +97,23 @@ export default function Home() {
           aria-label="Çadır Keyfi Voleybol"
           style={{
             position: "absolute",
-            left: "9%",
-            top: "66.8%",
-            width: "82%",
-            height: "5.9%",
+            left: "12%",
+            top: "71.6%",
+            width: "76%",
+            height: "5.7%",
             zIndex: 20,
           }}
         />
 
-        {/* İletişim ve IBAN şimdilik pasif */}
+        {/*
+          İLETİŞİM:
+          Şimdilik pasif.
+          Telefon numarası geldiğinde aktif edeceğiz.
+
+          IBAN:
+          Şimdilik pasif.
+          IBAN geldiğinde ayrı kopyalama ekranına bağlayacağız.
+        */}
       </div>
     </main>
   );
