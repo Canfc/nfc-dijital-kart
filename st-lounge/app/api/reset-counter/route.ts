@@ -1,55 +1,159 @@
-import { createClient } from "@supabase/supabase-js";
-import { NextRequest, NextResponse } from "next/server";
+import {
+  NextRequest,
+  NextResponse,
+} from "next/server";
 
-export async function POST(request: NextRequest) {
-  const adminSession = request.cookies.get("admin_session")?.value;
+import {
+  createAdminClient,
+} from "../../../lib/supabase-admin";
 
-  if (adminSession !== "authenticated") {
+import {
+  verifyAdminSessionToken,
+} from "../../../lib/admin-session";
+
+export const dynamic = "force-dynamic";
+
+export async function POST(
+  request: NextRequest
+) {
+  /* =========================
+     SAME ORIGIN
+  ========================= */
+
+  const origin =
+    request.headers.get("origin");
+
+  const expectedOrigin =
+    new URL(request.url).origin;
+
+  if (
+    origin &&
+    origin !== expectedOrigin
+  ) {
     return NextResponse.json(
-      { error: "Yetkisiz işlem" },
-      { status: 401 }
+      {
+        error:
+          "Yetkisiz istek.",
+      },
+      {
+        status: 403,
+      }
     );
   }
 
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SECRET_KEY!
-  );
+  /* =========================
+     ADMIN SESSION
+  ========================= */
 
-  const business = "ST Lounge Cafe";
+  const adminSession =
+    request.cookies.get(
+      "admin_session"
+    )?.value;
 
-  const { data: settings, error: settingsError } = await supabase
+  const isAuthenticated =
+    verifyAdminSessionToken(
+      adminSession
+    );
+
+  if (!isAuthenticated) {
+    return NextResponse.redirect(
+      new URL(
+        "/istatistik",
+        request.url
+      ),
+      303
+    );
+  }
+
+  /* =========================
+     SUPABASE
+  ========================= */
+
+  const supabase =
+    createAdminClient();
+
+  const business =
+    "ST Lounge Cafe";
+
+  /* =========================
+     MEVCUT DÖNEM
+  ========================= */
+
+  const {
+    data: settings,
+    error: settingsError,
+  } = await supabase
     .from("counter_settings")
     .select("counter_version")
     .eq("business", business)
     .single();
 
-  if (settingsError || !settings) {
-    return NextResponse.json(
-      { error: "Sayaç ayarı okunamadı" },
-      { status: 500 }
+  if (
+    settingsError ||
+    !settings
+  ) {
+    console.error(
+      "Sayaç ayarı okunamadı:",
+      settingsError
+    );
+
+    return NextResponse.redirect(
+      new URL(
+        "/istatistik?error=reset",
+        request.url
+      ),
+      303
     );
   }
 
-  const newVersion = settings.counter_version + 1;
+  const currentVersion =
+    settings.counter_version ??
+    1;
 
-  const { error } = await supabase
+  const newVersion =
+    currentVersion + 1;
+
+  /* =========================
+     YENİ DÖNEM
+  ========================= */
+
+  const {
+    error: updateError,
+  } = await supabase
     .from("counter_settings")
     .update({
-      counter_version: newVersion,
-      reset_at: new Date().toISOString(),
+      counter_version:
+        newVersion,
+
+      reset_at:
+        new Date().toISOString(),
     })
     .eq("business", business);
 
-  if (error) {
-    return NextResponse.json(
-      { error: "Sayaç sıfırlanamadı" },
-      { status: 500 }
+  if (updateError) {
+    console.error(
+      "Sayaç sıfırlanamadı:",
+      updateError
+    );
+
+    return NextResponse.redirect(
+      new URL(
+        "/istatistik?error=reset",
+        request.url
+      ),
+      303
     );
   }
 
+  /* =========================
+     BAŞARILI
+  ========================= */
+
   return NextResponse.redirect(
-    new URL("/istatistik", request.url),
+    new URL(
+      "/istatistik?reset=success",
+      request.url
+    ),
     303
   );
 }

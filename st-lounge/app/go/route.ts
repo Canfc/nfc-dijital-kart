@@ -1,15 +1,15 @@
-import { createClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
+import { createAdminClient } from "../../lib/supabase-admin";
+
+export const dynamic = "force-dynamic";
 
 export async function GET(request: NextRequest) {
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_PUBLISHABLE_KEY!
-  );
+  const supabase = createAdminClient();
 
   const business = "ST Lounge Cafe";
 
+  /* Güncel sayaç dönemini al */
   const { data: settings, error: settingsError } = await supabase
     .from("counter_settings")
     .select("counter_version")
@@ -26,12 +26,14 @@ export async function GET(request: NextRequest) {
 
   const currentVersion = settings.counter_version;
 
+  /* Tarayıcı daha önce ziyaret etmiş mi? */
   const existingVisitorId =
     request.cookies.get("visitor_id")?.value;
 
   const existingVersion =
     request.cookies.get("counter_version")?.value;
 
+  /* Aynı ziyaretçi + aynı dönem ise tekrar sayma */
   if (
     existingVisitorId &&
     existingVersion === String(currentVersion)
@@ -41,10 +43,12 @@ export async function GET(request: NextRequest) {
     );
   }
 
+  /* Yeni ziyaretçi kimliği */
   const visitorId =
     existingVisitorId || crypto.randomUUID();
 
-  const { error } = await supabase
+  /* Supabase'e server-side kayıt */
+  const { error: insertError } = await supabase
     .from("visits")
     .insert({
       business,
@@ -52,22 +56,32 @@ export async function GET(request: NextRequest) {
       counter_version: currentVersion,
     });
 
-  if (error) {
-    console.error("Sayaç hatası:", error);
+  if (insertError) {
+    console.error(
+      "Ziyaret kaydı oluşturulamadı:",
+      insertError
+    );
   }
 
+  /* Ana sayfaya yönlendir */
   const response = NextResponse.redirect(
     new URL("/", request.url)
   );
 
-  response.cookies.set("visitor_id", visitorId, {
-    httpOnly: true,
-    secure: true,
-    sameSite: "lax",
-    maxAge: 60 * 60 * 24 * 365,
-    path: "/",
-  });
+  /* Ziyaretçi kimliği */
+  response.cookies.set(
+    "visitor_id",
+    visitorId,
+    {
+      httpOnly: true,
+      secure: true,
+      sameSite: "lax",
+      maxAge: 60 * 60 * 24 * 365,
+      path: "/",
+    }
+  );
 
+  /* Ziyaretçinin hangi sayaç döneminde sayıldığını sakla */
   response.cookies.set(
     "counter_version",
     String(currentVersion),
