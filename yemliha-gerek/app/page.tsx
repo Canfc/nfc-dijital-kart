@@ -2,8 +2,11 @@ export default function Home() {
   return (
     <main
       style={{
-        minHeight: "100dvh",
+        position: "fixed",
+        inset: 0,
         width: "100%",
+        height: "100dvh",
+        overflow: "hidden",
         background: "#000",
         display: "flex",
         justifyContent: "center",
@@ -14,20 +17,53 @@ export default function Home() {
           position: "relative",
           width: "100%",
           maxWidth: "430px",
-          lineHeight: 0,
+          height: "100dvh",
+          overflow: "hidden",
           background: "#000",
         }}
       >
-        {/* PANEL */}
+        {/* PREMIUM PANEL */}
         <img
           src="/yemliha-premium-panel.png"
-          alt="Yemliha Gerek"
+          alt=""
+          aria-hidden="true"
           style={{
-            display: "block",
+            position: "absolute",
+            inset: 0,
             width: "100%",
-            height: "auto",
+            height: "100%",
+            objectFit: "fill",
+            display: "block",
           }}
         />
+
+        {/* ORİJİNAL PROFİL FOTOĞRAFI */}
+        <div
+          style={{
+            position: "absolute",
+            left: "36.6%",
+            top: "5.0%",
+            width: "26.3%",
+            height: "17.2%",
+            borderRadius: "50%",
+            overflow: "hidden",
+            zIndex: 5,
+            boxShadow:
+              "0 0 0 2px #17100a, 0 0 0 4px #b77b1f, 0 0 22px rgba(218,160,55,.6)",
+          }}
+        >
+          <img
+            src="/yemliha-gerek-profile.jpg"
+            alt="Yemliha Gerek"
+            style={{
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              objectPosition: "center",
+              display: "block",
+            }}
+          />
+        </div>
 
         {/* INSTAGRAM */}
         <a
@@ -35,11 +71,11 @@ export default function Home() {
           aria-label="Yemliha Gerek Instagram"
           style={{
             position: "absolute",
-            left: "9.5%",
-            top: "36.7%",
-            width: "81%",
+            left: "9%",
+            top: "36.8%",
+            width: "82%",
             height: "9%",
-            zIndex: 10,
+            zIndex: 20,
           }}
         />
 
@@ -49,11 +85,11 @@ export default function Home() {
           aria-label="Çadır Keyfi"
           style={{
             position: "absolute",
-            left: "9.5%",
+            left: "9%",
             top: "49.7%",
-            width: "81%",
+            width: "82%",
             height: "7.7%",
-            zIndex: 10,
+            zIndex: 20,
           }}
         />
 
@@ -63,11 +99,11 @@ export default function Home() {
           aria-label="Marmara Fest"
           style={{
             position: "absolute",
-            left: "9.5%",
+            left: "9%",
             top: "58.4%",
-            width: "81%",
+            width: "82%",
             height: "7.7%",
-            zIndex: 10,
+            zIndex: 20,
           }}
         />
 
@@ -77,11 +113,11 @@ export default function Home() {
           aria-label="Kocaeli Planı"
           style={{
             position: "absolute",
-            left: "9.5%",
+            left: "9%",
             top: "67%",
-            width: "81%",
+            width: "82%",
             height: "7.7%",
-            zIndex: 10,
+            zIndex: 20,
           }}
         />
 
@@ -91,11 +127,11 @@ export default function Home() {
           aria-label="Çadır Keyfi Voleybol"
           style={{
             position: "absolute",
-            left: "9.5%",
+            left: "9%",
             top: "75.7%",
-            width: "81%",
+            width: "82%",
             height: "7.7%",
-            zIndex: 10,
+            zIndex: 20,
           }}
         />
 
@@ -105,18 +141,15 @@ export default function Home() {
           aria-label="Yemliha Gerek telefon"
           style={{
             position: "absolute",
-            left: "8.7%",
+            left: "8.5%",
             top: "84.8%",
-            width: "40%",
-            height: "7.8%",
-            zIndex: 10,
+            width: "40.5%",
+            height: "8%",
+            zIndex: 20,
           }}
         />
 
-        {/* IBAN
-            Şimdilik özellikle tıklanabilir değil.
-            Gerçek IBAN geldiğinde /iban sayfasına bağlayacağız.
-        */}
+        {/* IBAN - ŞİMDİLİK PASİF */}
       </div>
     </main>
   );
