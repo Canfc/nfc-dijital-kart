@@ -3,12 +3,22 @@ import { cookies } from "next/headers";
 
 export const dynamic = "force-dynamic";
 
+const cardCodes = [
+  "CON01",
+  "CON02",
+  "CON03",
+  "CON04",
+  "CON05",
+];
+
 export default async function IstatistikPage() {
   const cookieStore = await cookies();
-  const adminSession = cookieStore.get("admin_session")?.value;
+
+  const adminSession =
+    cookieStore.get("admin_session")?.value;
 
   /* =========================
-     GİRİŞ EKRANI
+     GİRİŞ
   ========================= */
 
   if (adminSession !== "authenticated") {
@@ -19,7 +29,8 @@ export default async function IstatistikPage() {
           background:
             "radial-gradient(circle at top, #24211a 0%, #111315 35%, #08090b 100%)",
           color: "#f7f7f7",
-          fontFamily: "Arial, Helvetica, sans-serif",
+          fontFamily:
+            "Arial, Helvetica, sans-serif",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -32,10 +43,12 @@ export default async function IstatistikPage() {
             width: "100%",
             maxWidth: "420px",
             background: "#15181c",
-            border: "1px solid #30343a",
+            border:
+              "1px solid #30343a",
             borderRadius: "22px",
             padding: "34px 28px",
-            boxShadow: "0 24px 70px rgba(0,0,0,0.55)",
+            boxShadow:
+              "0 24px 70px rgba(0,0,0,0.55)",
           }}
         >
           <div
@@ -45,9 +58,11 @@ export default async function IstatistikPage() {
               borderRadius: "16px",
               display: "flex",
               alignItems: "center",
-              justifyContent: "center",
+              justifyContent:
+                "center",
               background: "#221d13",
-              border: "1px solid #6f5929",
+              border:
+                "1px solid #6f5929",
               fontSize: "26px",
               marginBottom: "22px",
             }}
@@ -61,7 +76,8 @@ export default async function IstatistikPage() {
               color: "#d4a853",
               fontSize: "12px",
               fontWeight: "700",
-              letterSpacing: "0.14em",
+              letterSpacing:
+                "0.14em",
             }}
           >
             YÖNETİM PANELİ
@@ -86,26 +102,15 @@ export default async function IstatistikPage() {
               lineHeight: 1.6,
             }}
           >
-            İstatistikleri görüntülemek için yönetici şifrenizi girin.
+            İstatistikleri görüntülemek
+            için yönetici şifrenizi girin.
           </p>
 
-          <form action="/api/admin-login" method="POST">
-            <label
-              htmlFor="password"
-              style={{
-                display: "block",
-                marginTop: "26px",
-                marginBottom: "8px",
-                color: "#d7dbe0",
-                fontSize: "13px",
-                fontWeight: "600",
-              }}
-            >
-              Yönetici şifresi
-            </label>
-
+          <form
+            action="/api/admin-login"
+            method="POST"
+          >
             <input
-              id="password"
               type="password"
               name="password"
               placeholder="Şifrenizi girin"
@@ -113,13 +118,16 @@ export default async function IstatistikPage() {
               style={{
                 width: "100%",
                 padding: "15px 16px",
-                boxSizing: "border-box",
+                boxSizing:
+                  "border-box",
                 borderRadius: "12px",
-                border: "1px solid #3a3f46",
+                border:
+                  "1px solid #3a3f46",
                 outline: "none",
                 background: "#0d0f12",
                 color: "#ffffff",
                 fontSize: "16px",
+                marginTop: "26px",
               }}
             />
 
@@ -155,109 +163,162 @@ export default async function IstatistikPage() {
     process.env.SUPABASE_PUBLISHABLE_KEY!
   );
 
-  const business = "Container Coffee Works";
+  const business =
+    "Container Coffee Works";
 
-  const { data: settings } = await supabase
-    .from("counter_settings")
-    .select("counter_version")
-    .eq("business", business)
-    .maybeSingle();
+  const { data: settings } =
+    await supabase
+      .from("counter_settings")
+      .select("counter_version")
+      .eq("business", business)
+      .maybeSingle();
 
-  const currentVersion = settings?.counter_version ?? 1;
-
-  /* =========================
-     TOPLAM ZİYARETÇİ
-  ========================= */
-
-  const { count: visitorCount } = await supabase
-    .from("visits")
-    .select("*", { count: "exact", head: true })
-    .eq("business", business)
-    .eq("counter_version", currentVersion);
+  const currentVersion =
+    settings?.counter_version ?? 1;
 
   /* =========================
-     KART BAZLI SAYAÇLAR
+     TOPLAM ZİYARET
   ========================= */
 
-  const { count: con01Count } = await supabase
-    .from("visits")
-    .select("*", { count: "exact", head: true })
-    .eq("business", business)
-    .eq("counter_version", currentVersion)
-    .eq("card_code", "CON01");
+  const { count: visitorCount } =
+    await supabase
+      .from("visits")
+      .select("*", {
+        count: "exact",
+        head: true,
+      })
+      .eq("business", business)
+      .eq(
+        "counter_version",
+        currentVersion
+      );
 
-  const { count: con02Count } = await supabase
-    .from("visits")
-    .select("*", { count: "exact", head: true })
-    .eq("business", business)
-    .eq("counter_version", currentVersion)
-    .eq("card_code", "CON02");
+  /* =========================
+     KART ZİYARETLERİ
+  ========================= */
 
-  const { count: con03Count } = await supabase
-    .from("visits")
-    .select("*", { count: "exact", head: true })
-    .eq("business", business)
-    .eq("counter_version", currentVersion)
-    .eq("card_code", "CON03");
+  const cardVisitResults =
+    await Promise.all(
+      cardCodes.map((code) =>
+        supabase
+          .from("visits")
+          .select("*", {
+            count: "exact",
+            head: true,
+          })
+          .eq("business", business)
+          .eq(
+            "counter_version",
+            currentVersion
+          )
+          .eq("card_code", code)
+      )
+    );
 
-  const { count: con04Count } = await supabase
-    .from("visits")
-    .select("*", { count: "exact", head: true })
-    .eq("business", business)
-    .eq("counter_version", currentVersion)
-    .eq("card_code", "CON04");
+  const cardVisitCounts:
+    Record<string, number> = {};
 
-  const { count: con05Count } = await supabase
-    .from("visits")
-    .select("*", { count: "exact", head: true })
-    .eq("business", business)
-    .eq("counter_version", currentVersion)
-    .eq("card_code", "CON05");
+  cardCodes.forEach(
+    (code, index) => {
+      cardVisitCounts[code] =
+        cardVisitResults[index].count ??
+        0;
+    }
+  );
 
   /* =========================
      SON ZİYARET
   ========================= */
 
-  const { data: lastVisit } = await supabase
-    .from("visits")
-    .select("turkiye_saati")
-    .eq("business", business)
-    .eq("counter_version", currentVersion)
-    .order("turkiye_saati", { ascending: false })
-    .limit(1)
-    .maybeSingle();
+  const { data: lastVisit } =
+    await supabase
+      .from("visits")
+      .select("turkiye_saati")
+      .eq("business", business)
+      .eq(
+        "counter_version",
+        currentVersion
+      )
+      .order("turkiye_saati", {
+        ascending: false,
+      })
+      .limit(1)
+      .maybeSingle();
 
   /* =========================
-     LINK TIKLAMALARI
+     TÜM LINK TIKLAMALARI
   ========================= */
 
-  const { data: clicks } = await supabase
-    .from("link_clicks")
-    .select("link_name")
-    .eq("business", business)
-    .eq("counter_version", currentVersion);
+  const { data: clicks } =
+    await supabase
+      .from("link_clicks")
+      .select(
+        "link_name, card_code"
+      )
+      .eq("business", business)
+      .eq(
+        "counter_version",
+        currentVersion
+      );
+
+  const allClicks = clicks ?? [];
 
   const googleCount =
-    clicks?.filter((item) => item.link_name === "google").length ?? 0;
+    allClicks.filter(
+      (item) =>
+        item.link_name === "google"
+    ).length;
 
   const instagramCount =
-    clicks?.filter((item) => item.link_name === "instagram").length ?? 0;
+    allClicks.filter(
+      (item) =>
+        item.link_name ===
+        "instagram"
+    ).length;
 
   const konumCount =
-    clicks?.filter((item) => item.link_name === "konum").length ?? 0;
+    allClicks.filter(
+      (item) =>
+        item.link_name === "konum"
+    ).length;
 
   const telefonCount =
-    clicks?.filter((item) => item.link_name === "telefon").length ?? 0;
+    allClicks.filter(
+      (item) =>
+        item.link_name ===
+        "telefon"
+    ).length;
 
   const totalInteractions =
-    googleCount + instagramCount + konumCount + telefonCount;
+    googleCount +
+    instagramCount +
+    konumCount +
+    telefonCount;
 
-  const sonZiyaret = lastVisit?.turkiye_saati
-    ? new Date(lastVisit.turkiye_saati).toLocaleString("tr-TR", {
-        dateStyle: "short",
-        timeStyle: "medium",
-      })
-    : "Henüz ziyaret yok";
+  /* =========================
+     KART BAZLI LINKLER
+  ========================= */
+
+  function getCardClicks(
+    cardCode: string,
+    linkName: string
+  ) {
+    return allClicks.filter(
+      (item) =>
+        item.card_code === cardCode &&
+        item.link_name === linkName
+    ).length;
+  }
+
+  const sonZiyaret =
+    lastVisit?.turkiye_saati
+      ? new Date(
+          lastVisit.turkiye_saati
+        ).toLocaleString("tr-TR", {
+          dateStyle: "short",
+          timeStyle: "medium",
+        })
+      : "Henüz ziyaret yok";
 
   return (
     <main
@@ -266,7 +327,8 @@ export default async function IstatistikPage() {
         background:
           "radial-gradient(circle at top, #201d16 0%, #0d0f12 32%, #08090b 100%)",
         color: "#f5f7fa",
-        fontFamily: "Arial, Helvetica, sans-serif",
+        fontFamily:
+          "Arial, Helvetica, sans-serif",
         padding: "32px 18px 60px",
         boxSizing: "border-box",
       }}
@@ -274,76 +336,53 @@ export default async function IstatistikPage() {
       <div
         style={{
           width: "100%",
-          maxWidth: "760px",
+          maxWidth: "900px",
           margin: "0 auto",
         }}
       >
-        {/* BAŞLIK */}
+        {/* HEADER */}
 
-        <header style={{ marginBottom: "26px" }}>
-          <div
+        <header
+          style={{
+            marginBottom: "26px",
+          }}
+        >
+          <p
             style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "14px",
+              margin: "0 0 6px",
+              color: "#d4a853",
+              fontSize: "11px",
+              fontWeight: "700",
+              letterSpacing:
+                "0.15em",
             }}
           >
-            <div
-              style={{
-                width: "54px",
-                height: "54px",
-                flexShrink: 0,
-                borderRadius: "16px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                background: "#211d14",
-                border: "1px solid #655226",
-                fontSize: "25px",
-              }}
-            >
-              ☕
-            </div>
+            NFC İSTATİSTİK PANELİ
+          </p>
 
-            <div>
-              <p
-                style={{
-                  margin: "0 0 5px",
-                  color: "#d4a853",
-                  fontSize: "11px",
-                  fontWeight: "700",
-                  letterSpacing: "0.15em",
-                }}
-              >
-                İSTATİSTİK PANELİ
-              </p>
-
-              <h1
-                style={{
-                  margin: 0,
-                  fontSize: "27px",
-                  lineHeight: 1.15,
-                  color: "#ffffff",
-                }}
-              >
-                Container Coffee Works
-              </h1>
-            </div>
-          </div>
+          <h1
+            style={{
+              margin: 0,
+              color: "#ffffff",
+              fontSize: "28px",
+            }}
+          >
+            ☕ Container Coffee Works
+          </h1>
 
           <p
             style={{
               color: "#a7afb9",
-              margin: "14px 0 0",
               fontSize: "14px",
-              lineHeight: 1.5,
+              marginTop: "10px",
             }}
           >
-            Beş NFC kartın toplam ve ayrı ayrı ziyaret performansı.
+            5 fiziksel NFC kartın ayrı
+            performans analizi
           </p>
         </header>
 
-        {/* TOPLAM ZİYARET */}
+        {/* GENEL ÖZET */}
 
         <section
           style={{
@@ -351,92 +390,63 @@ export default async function IstatistikPage() {
             borderRadius: "20px",
             background:
               "linear-gradient(135deg, #1c1b17 0%, #15181c 55%, #111315 100%)",
-            border: "1px solid #554521",
-            boxShadow: "0 20px 50px rgba(0,0,0,0.25)",
+            border:
+              "1px solid #554521",
+            marginBottom: "28px",
           }}
         >
-          <div
+          <p
             style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "flex-start",
-              gap: "15px",
+              margin: 0,
+              color: "#aeb4bd",
+              fontSize: "12px",
+              fontWeight: "700",
             }}
           >
-            <div>
-              <p
-                style={{
-                  margin: 0,
-                  color: "#aeb4bd",
-                  fontSize: "12px",
-                  fontWeight: "700",
-                  letterSpacing: "0.12em",
-                }}
-              >
-                TOPLAM TEKİL ZİYARET
-              </p>
+            TOPLAM TEKİL ZİYARET
+          </p>
 
-              <div
-                style={{
-                  marginTop: "9px",
-                  fontSize: "58px",
-                  lineHeight: 1,
-                  fontWeight: "800",
-                  color: "#ffffff",
-                  letterSpacing: "-0.04em",
-                }}
-              >
-                {visitorCount ?? 0}
-              </div>
-            </div>
-
-            <div
-              style={{
-                padding: "8px 12px",
-                borderRadius: "999px",
-                background: "#15251c",
-                border: "1px solid #285a39",
-                color: "#6ee7a0",
-                fontSize: "12px",
-                fontWeight: "700",
-              }}
-            >
-              5 Kart Aktif
-            </div>
+          <div
+            style={{
+              color: "#ffffff",
+              fontSize: "58px",
+              fontWeight: "800",
+              marginTop: "8px",
+            }}
+          >
+            {visitorCount ?? 0}
           </div>
 
           <div
             style={{
               height: "1px",
               background: "#30343a",
-              margin: "22px 0 17px",
+              margin: "20px 0",
             }}
           />
 
           <div
             style={{
               display: "flex",
-              justifyContent: "space-between",
-              gap: "15px",
+              justifyContent:
+                "space-between",
               flexWrap: "wrap",
+              gap: "15px",
             }}
           >
             <div>
-              <div
+              <small
                 style={{
                   color: "#8e96a1",
-                  fontSize: "11px",
-                  marginBottom: "5px",
                 }}
               >
                 Son ziyaret
-              </div>
+              </small>
 
               <div
                 style={{
-                  color: "#f4f4f5",
-                  fontSize: "14px",
-                  fontWeight: "600",
+                  marginTop: "5px",
+                  color: "#ffffff",
                 }}
               >
                 {sonZiyaret}
@@ -444,20 +454,18 @@ export default async function IstatistikPage() {
             </div>
 
             <div>
-              <div
+              <small
                 style={{
                   color: "#8e96a1",
-                  fontSize: "11px",
-                  marginBottom: "5px",
                 }}
               >
                 Sayaç dönemi
-              </div>
+              </small>
 
               <div
                 style={{
+                  marginTop: "5px",
                   color: "#d4a853",
-                  fontSize: "14px",
                   fontWeight: "700",
                 }}
               >
@@ -467,279 +475,407 @@ export default async function IstatistikPage() {
           </div>
         </section>
 
-        {/* KART BAZLI SAYAÇLAR */}
+        {/* 5 AYRI KART PANELİ */}
 
-        <div style={{ margin: "30px 2px 14px" }}>
-          <h2
-            style={{
-              margin: 0,
-              color: "#ffffff",
-              fontSize: "18px",
-            }}
-          >
-            Kart Performansı
-          </h2>
-
-          <p
-            style={{
-              margin: "6px 0 0",
-              color: "#8e96a1",
-              fontSize: "12px",
-            }}
-          >
-            Her fiziksel NFC kartın ayrı ziyaret sayısı
-          </p>
-        </div>
-
-        <section
+        <h2
           style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(135px, 1fr))",
-            gap: "12px",
+            color: "#ffffff",
+            fontSize: "19px",
+            marginBottom: "15px",
           }}
         >
-          <CardStat code="CON01" title="Kart 1" value={con01Count ?? 0} />
-          <CardStat code="CON02" title="Kart 2" value={con02Count ?? 0} />
-          <CardStat code="CON03" title="Kart 3" value={con03Count ?? 0} />
-          <CardStat code="CON04" title="Kart 4" value={con04Count ?? 0} />
-          <CardStat code="CON05" title="Kart 5" value={con05Count ?? 0} />
-        </section>
-
-        {/* LINK ETKİLEŞİMLERİ */}
+          Kart Performansı
+        </h2>
 
         <div
           style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "end",
-            gap: "15px",
-            margin: "32px 2px 13px",
+            display: "grid",
+            gridTemplateColumns:
+              "repeat(auto-fit, minmax(280px, 1fr))",
+            gap: "14px",
           }}
         >
-          <div>
-            <h2
-              style={{
-                margin: 0,
-                color: "#ffffff",
-                fontSize: "18px",
-              }}
-            >
-              Link Etkileşimleri
-            </h2>
-
-            <p
-              style={{
-                margin: "5px 0 0",
-                color: "#8e96a1",
-                fontSize: "12px",
-              }}
-            >
-              Tüm Container kartlarının toplam etkileşimleri
-            </p>
-          </div>
-
-          <div
-            style={{
-              color: "#d4a853",
-              fontWeight: "800",
-              fontSize: "20px",
-            }}
-          >
-            {totalInteractions}
-          </div>
+          {cardCodes.map(
+            (cardCode, index) => (
+              <CardPerformancePanel
+                key={cardCode}
+                code={cardCode}
+                title={`Kart ${index + 1}`}
+                visits={
+                  cardVisitCounts[
+                    cardCode
+                  ] ?? 0
+                }
+                google={getCardClicks(
+                  cardCode,
+                  "google"
+                )}
+                instagram={getCardClicks(
+                  cardCode,
+                  "instagram"
+                )}
+                konum={getCardClicks(
+                  cardCode,
+                  "konum"
+                )}
+                telefon={getCardClicks(
+                  cardCode,
+                  "telefon"
+                )}
+              />
+            )
+          )}
         </div>
 
-        <section
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(145px, 1fr))",
-            gap: "12px",
-          }}
-        >
-          <StatCard icon="⭐" title="Google Yorum" value={googleCount} />
-          <StatCard icon="📸" title="Instagram" value={instagramCount} />
-          <StatCard icon="📍" title="Konum" value={konumCount} />
-          <StatCard icon="📞" title="Telefon" value={telefonCount} />
-        </section>
-
-        {/* SON ZİYARET */}
+        {/* TOPLAM ETKİLEŞİM */}
 
         <section
           style={{
-            marginTop: "18px",
-            padding: "20px",
-            borderRadius: "17px",
-            background: "#15181d",
-            border: "1px solid #2a2f36",
+            marginTop: "30px",
           }}
         >
           <div
             style={{
-              color: "#8f97a2",
-              fontSize: "11px",
-              fontWeight: "700",
-              letterSpacing: "0.12em",
-              marginBottom: "8px",
+              display: "flex",
+              justifyContent:
+                "space-between",
+              alignItems: "center",
+              marginBottom: "13px",
             }}
           >
-            SON ZİYARET
+            <div>
+              <h2
+                style={{
+                  margin: 0,
+                  color: "#ffffff",
+                  fontSize: "18px",
+                }}
+              >
+                Toplam Etkileşimler
+              </h2>
+
+              <p
+                style={{
+                  color: "#8e96a1",
+                  fontSize: "12px",
+                  margin: "5px 0 0",
+                }}
+              >
+                Beş kartın toplamı
+              </p>
+            </div>
+
+            <strong
+              style={{
+                color: "#d4a853",
+                fontSize: "23px",
+              }}
+            >
+              {totalInteractions}
+            </strong>
           </div>
 
           <div
             style={{
-              color: "#ffffff",
-              fontSize: "17px",
-              lineHeight: 1.4,
-              fontWeight: "600",
+              display: "grid",
+              gridTemplateColumns:
+                "repeat(auto-fit, minmax(145px, 1fr))",
+              gap: "12px",
             }}
           >
-            {sonZiyaret}
+            <TotalStat
+              icon="⭐"
+              title="Google"
+              value={googleCount}
+            />
+
+            <TotalStat
+              icon="📸"
+              title="Instagram"
+              value={instagramCount}
+            />
+
+            <TotalStat
+              icon="📍"
+              title="Konum"
+              value={konumCount}
+            />
+
+            <TotalStat
+              icon="📞"
+              title="Telefon"
+              value={telefonCount}
+            />
           </div>
         </section>
 
-        {/* SAYAÇ YÖNETİMİ */}
+        {/* RESET */}
 
         <section
           style={{
-            marginTop: "28px",
+            marginTop: "30px",
             padding: "20px",
             borderRadius: "17px",
             background: "#181315",
-            border: "1px solid #512b30",
+            border:
+              "1px solid #512b30",
           }}
         >
-          <div
-            style={{
-              color: "#ffffff",
-              fontWeight: "700",
-              fontSize: "15px",
-              marginBottom: "5px",
-            }}
-          >
+          <strong>
             Sayaç Yönetimi
-          </div>
+          </strong>
 
           <p
             style={{
-              margin: "0 0 16px",
               color: "#a69a9c",
               fontSize: "12px",
               lineHeight: 1.5,
             }}
           >
-            Sayaç sıfırlandığında beş kartın tamamı için yeni bir istatistik
-            dönemi başlatılır.
+            Bu işlem beş kart için de
+            yeni sayaç dönemi başlatır.
           </p>
 
-          <form action="/api/reset-counter" method="POST">
+          <form
+            action="/api/reset-counter"
+            method="POST"
+          >
             <button
               type="submit"
               style={{
                 width: "100%",
-                padding: "14px 20px",
+                padding: "14px",
                 background: "#c53d45",
                 color: "#ffffff",
-                border: "1px solid #e15960",
+                border:
+                  "1px solid #e15960",
                 borderRadius: "12px",
                 cursor: "pointer",
                 fontWeight: "800",
-                fontSize: "14px",
               }}
             >
               Tüm Sayaçları Sıfırla
             </button>
           </form>
         </section>
-
-        <footer
-          style={{
-            marginTop: "30px",
-            textAlign: "center",
-            color: "#686f79",
-            fontSize: "11px",
-          }}
-        >
-          Container Coffee Works • 5 Kart NFC İstatistik Sistemi
-        </footer>
       </div>
     </main>
   );
 }
 
 /* =========================
-   KART SAYAÇ BİLEŞENİ
+   FİZİKSEL KART PANELİ
 ========================= */
 
-function CardStat({
+function CardPerformancePanel({
   code,
   title,
-  value,
+  visits,
+  google,
+  instagram,
+  konum,
+  telefon,
 }: {
   code: string;
   title: string;
+  visits: number;
+  google: number;
+  instagram: number;
+  konum: number;
+  telefon: number;
+}) {
+  const interactions =
+    google +
+    instagram +
+    konum +
+    telefon;
+
+  return (
+    <section
+      style={{
+        padding: "20px",
+        borderRadius: "19px",
+        background:
+          "linear-gradient(145deg, #1b1915 0%, #13161a 65%, #101215 100%)",
+        border:
+          "1px solid #493c22",
+        boxShadow:
+          "0 12px 28px rgba(0,0,0,.22)",
+      }}
+    >
+      <div
+        style={{
+          display: "flex",
+          justifyContent:
+            "space-between",
+          alignItems: "start",
+        }}
+      >
+        <div>
+          <div
+            style={{
+              color: "#d4a853",
+              fontSize: "11px",
+              fontWeight: "800",
+              letterSpacing:
+                "0.12em",
+            }}
+          >
+            {code}
+          </div>
+
+          <h3
+            style={{
+              color: "#ffffff",
+              margin: "6px 0 0",
+              fontSize: "17px",
+            }}
+          >
+            {title}
+          </h3>
+        </div>
+
+        <div
+          style={{
+            color: "#6ee7a0",
+            fontSize: "10px",
+            fontWeight: "700",
+            background: "#15251c",
+            border:
+              "1px solid #285a39",
+            padding: "6px 9px",
+            borderRadius: "999px",
+          }}
+        >
+          AKTİF
+        </div>
+      </div>
+
+      <div
+        style={{
+          marginTop: "19px",
+          paddingBottom: "17px",
+          borderBottom:
+            "1px solid #30343a",
+        }}
+      >
+        <div
+          style={{
+            color: "#8f97a2",
+            fontSize: "11px",
+          }}
+        >
+          Tekil ziyaret
+        </div>
+
+        <div
+          style={{
+            color: "#ffffff",
+            fontSize: "38px",
+            lineHeight: 1,
+            fontWeight: "800",
+            marginTop: "7px",
+          }}
+        >
+          {visits}
+        </div>
+      </div>
+
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns:
+            "1fr 1fr",
+          gap: "9px",
+          marginTop: "15px",
+        }}
+      >
+        <MiniStat
+          label="⭐ Google"
+          value={google}
+        />
+
+        <MiniStat
+          label="📸 Instagram"
+          value={instagram}
+        />
+
+        <MiniStat
+          label="📍 Konum"
+          value={konum}
+        />
+
+        <MiniStat
+          label="📞 Telefon"
+          value={telefon}
+        />
+      </div>
+
+      <div
+        style={{
+          marginTop: "15px",
+          display: "flex",
+          justifyContent:
+            "space-between",
+          color: "#8f97a2",
+          fontSize: "11px",
+        }}
+      >
+        <span>Toplam etkileşim</span>
+
+        <strong
+          style={{
+            color: "#d4a853",
+          }}
+        >
+          {interactions}
+        </strong>
+      </div>
+    </section>
+  );
+}
+
+function MiniStat({
+  label,
+  value,
+}: {
+  label: string;
   value: number;
 }) {
   return (
     <div
       style={{
-        padding: "18px",
-        borderRadius: "17px",
-        background:
-          "linear-gradient(145deg, #1c1a15 0%, #14171b 70%)",
-        border: "1px solid #4a3c20",
+        background: "#101216",
+        border:
+          "1px solid #292d33",
+        borderRadius: "11px",
+        padding: "11px",
       }}
     >
       <div
         style={{
-          color: "#d4a853",
-          fontSize: "11px",
-          fontWeight: "800",
-          letterSpacing: "0.1em",
+          color: "#8f97a2",
+          fontSize: "10px",
         }}
       >
-        {code}
-      </div>
-
-      <div
-        style={{
-          color: "#9ea6b1",
-          fontSize: "12px",
-          marginTop: "5px",
-        }}
-      >
-        {title}
+        {label}
       </div>
 
       <div
         style={{
           color: "#ffffff",
-          fontSize: "32px",
-          lineHeight: 1,
+          fontSize: "20px",
           fontWeight: "800",
-          marginTop: "14px",
+          marginTop: "6px",
         }}
       >
         {value}
-      </div>
-
-      <div
-        style={{
-          color: "#707782",
-          fontSize: "10px",
-          marginTop: "7px",
-        }}
-      >
-        tekil ziyaret
       </div>
     </div>
   );
 }
 
-/* =========================
-   LINK İSTATİSTİĞİ
-========================= */
-
-function StatCard({
+function TotalStat({
   icon,
   title,
   value,
@@ -751,28 +887,20 @@ function StatCard({
   return (
     <div
       style={{
-        minHeight: "125px",
-        padding: "17px",
-        borderRadius: "17px",
         background: "#15181d",
-        border: "1px solid #2a2f36",
-        boxShadow: "0 10px 24px rgba(0,0,0,0.18)",
+        border:
+          "1px solid #2a2f36",
+        borderRadius: "15px",
+        padding: "16px",
       }}
     >
-      <div
-        style={{
-          fontSize: "21px",
-          marginBottom: "14px",
-        }}
-      >
-        {icon}
-      </div>
+      <div>{icon}</div>
 
       <div
         style={{
           color: "#9ea6b1",
-          fontSize: "12px",
-          marginBottom: "7px",
+          fontSize: "11px",
+          marginTop: "10px",
         }}
       >
         {title}
@@ -781,9 +909,9 @@ function StatCard({
       <div
         style={{
           color: "#ffffff",
-          fontSize: "28px",
-          lineHeight: 1,
+          fontSize: "27px",
           fontWeight: "800",
+          marginTop: "6px",
         }}
       >
         {value}
