@@ -1,119 +1,168 @@
+const projects = [
+  {
+    key: "cadirkeyfi",
+    name: "Çadır Keyfi",
+    username: "@cadirkeyfi",
+    mark: "ÇK",
+  },
+  {
+    key: "marmarafest",
+    name: "Marmara Fest",
+    username: "@marmarafest",
+    mark: "MF",
+  },
+  {
+    key: "kocaeliplani",
+    name: "Kocaeli Planı",
+    username: "@kocaeliplani",
+    mark: "KP",
+  },
+  {
+    key: "cadirkeyfivoleybol",
+    name: "Çadır Keyfi Voleybol",
+    username: "@cadirkeyfivoleybol",
+    mark: "VK",
+  },
+];
+
+function InstagramIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      width="22"
+      height="22"
+      fill="none"
+      aria-hidden="true"
+    >
+      <rect
+        x="3"
+        y="3"
+        width="18"
+        height="18"
+        rx="5"
+        stroke="currentColor"
+        strokeWidth="1.8"
+      />
+      <circle
+        cx="12"
+        cy="12"
+        r="4.1"
+        stroke="currentColor"
+        strokeWidth="1.8"
+      />
+      <circle cx="17.4" cy="6.7" r="1.05" fill="currentColor" />
+    </svg>
+  );
+}
+
+function ArrowIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      width="18"
+      height="18"
+      fill="none"
+      aria-hidden="true"
+    >
+      <path
+        d="M9 5l7 7-7 7"
+        stroke="currentColor"
+        strokeWidth="1.7"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
 export default function Home() {
   return (
-    <main
-      style={{
-        position: "fixed",
-        inset: 0,
-        width: "100%",
-        height: "100dvh",
-        overflow: "hidden",
-        backgroundColor: "#050505",
-      }}
-    >
-      <div
-        style={{
-          position: "relative",
-          width: "100%",
-          height: "100%",
-          maxWidth: "430px",
-          margin: "0 auto",
-          overflow: "hidden",
-          backgroundColor: "#050505",
-        }}
-      >
-        {/* ANA PANEL */}
-        <img
-          src="/yemliha-gerek-panel-v2.png"
-          alt="Yemliha Gerek"
-          style={{
-            position: "absolute",
-            inset: 0,
-            width: "100%",
-            height: "100%",
-            objectFit: "fill",
-            display: "block",
-          }}
-        />
+    <main className="personal-page">
+      <div className="personal-card">
+        <div className="ambient ambient-one" />
+        <div className="ambient ambient-two" />
 
-        {/* YEMLİHA GEREK */}
-        <a
-          href="/click?link=yemlihagerek"
-          aria-label="Yemliha Gerek Instagram"
-          style={{
-            position: "absolute",
-            left: "12%",
-            top: "41.3%",
-            width: "76%",
-            height: "8.6%",
-            zIndex: 20,
-          }}
-        />
+        <section className="hero">
+          <div className="profile-ring">
+            <div className="profile-photo">
+              <img
+                src="/yemliha-gerek-profile.jpg"
+                alt="Yemliha Gerek"
+              />
+            </div>
+          </div>
 
-        {/* ÇADIR KEYFİ */}
-        <a
-          href="/click?link=cadirkeyfi"
-          aria-label="Çadır Keyfi"
-          style={{
-            position: "absolute",
-            left: "12%",
-            top: "53.3%",
-            width: "76%",
-            height: "5.7%",
-            zIndex: 20,
-          }}
-        />
+          <p className="eyebrow">KİŞİSEL KART</p>
 
-        {/* MARMARA FEST */}
-        <a
-          href="/click?link=marmarafest"
-          aria-label="Marmara Fest"
-          style={{
-            position: "absolute",
-            left: "12%",
-            top: "59.4%",
-            width: "76%",
-            height: "5.7%",
-            zIndex: 20,
-          }}
-        />
+          <h1>Yemliha Gerek</h1>
 
-        {/* KOCAELİ PLANI */}
-        <a
-          href="/click?link=kocaeliplani"
-          aria-label="Kocaeli Planı"
-          style={{
-            position: "absolute",
-            left: "12%",
-            top: "65.5%",
-            width: "76%",
-            height: "5.7%",
-            zIndex: 20,
-          }}
-        />
+          <p className="subtitle">
+            Organizasyon · Etkinlik · Sosyal Projeler
+          </p>
 
-        {/* ÇADIR KEYFİ VOLEYBOL */}
-        <a
-          href="/click?link=cadirkeyfivoleybol"
-          aria-label="Çadır Keyfi Voleybol"
-          style={{
-            position: "absolute",
-            left: "12%",
-            top: "71.6%",
-            width: "76%",
-            height: "5.7%",
-            zIndex: 20,
-          }}
-        />
+          <div className="gold-divider">
+            <span />
+            <i>◆</i>
+            <span />
+          </div>
+        </section>
 
-        {/*
-          İLETİŞİM:
-          Şimdilik pasif.
-          Telefon numarası geldiğinde aktif edeceğiz.
+        <section className="content">
+          <a
+            href="/click?link=yemlihagerek"
+            className="main-social"
+            aria-label="Yemliha Gerek Instagram"
+          >
+            <div className="main-social-icon">
+              <InstagramIcon />
+            </div>
 
-          IBAN:
-          Şimdilik pasif.
-          IBAN geldiğinde ayrı kopyalama ekranına bağlayacağız.
-        */}
+            <div className="main-social-text">
+              <small>INSTAGRAM</small>
+              <strong>@yemlihagerek</strong>
+            </div>
+
+            <div className="arrow">
+              <ArrowIcon />
+            </div>
+          </a>
+
+          <div className="section-heading">
+            <span />
+            <p>PROJELERİM</p>
+            <span />
+          </div>
+
+          <div className="project-list">
+            {projects.map((project) => (
+              <a
+                key={project.key}
+                href={`/click?link=${project.key}`}
+                className="project-card"
+                aria-label={project.name}
+              >
+                <div className="project-logo">
+                  {project.mark}
+                </div>
+
+                <div className="project-info">
+                  <strong>{project.name}</strong>
+                  <span>{project.username}</span>
+                </div>
+
+                <div className="project-arrow">
+                  <ArrowIcon />
+                </div>
+              </a>
+            ))}
+          </div>
+        </section>
+
+        <footer className="personal-footer">
+          <div className="footer-monogram">YG</div>
+          <span />
+          <p>YEMLİHA GEREK</p>
+        </footer>
       </div>
     </main>
   );
