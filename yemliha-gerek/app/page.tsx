@@ -23,7 +23,7 @@ export default function Home() {
       >
         {/* ANA PANEL */}
         <img
-          src="/yemliha-gerek-panel.png"
+          src="/yemliha-gerek-panel-v2.png"
           alt="Yemliha Gerek"
           style={{
             position: "absolute",
