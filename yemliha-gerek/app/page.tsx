@@ -10,13 +10,20 @@ export default function Home() {
         backgroundColor: "#050505",
       }}
     >
+      {/* 
+        PANELİN ORİJİNAL ORANI: 941 x 1672
+        Tüm öğeler bu katmanla beraber ölçeklenir.
+      */}
       <div
         style={{
-          position: "relative",
-          width: "100%",
-          height: "100%",
-          maxWidth: "430px",
-          margin: "0 auto",
+          position: "absolute",
+          left: "50%",
+          top: "50%",
+
+          width: "max(100vw, calc(100dvh * 941 / 1672))",
+          height: "max(100dvh, calc(100vw * 1672 / 941))",
+
+          transform: "translate(-50%, -50%)",
           overflow: "hidden",
           backgroundColor: "#050505",
         }}
@@ -30,32 +37,45 @@ export default function Home() {
             inset: 0,
             width: "100%",
             height: "100%",
-            objectFit: "cover",
-            objectPosition: "center center",
           }}
         />
 
-        {/* ORİJİNAL PROFİL FOTOĞRAFI */}
-        <img
-          src="/yemliha-gerek-profile.jpg"
-          alt="Yemliha Gerek Profil"
+        {/* 
+          GERÇEK PROFİL FOTOĞRAFI
+          Fotoğrafın kendisine hiçbir efekt uygulanmıyor.
+          Sadece mevcut dairenin içine kırpılıyor.
+        */}
+        <div
           style={{
             position: "absolute",
 
-            top: "3.8%",
-            left: "30.8%",
-            width: "38.4%",
+            // Paneldeki altın dairenin iç kısmı
+            left: "33%",
+            top: "5.55%",
+            width: "37%",
             aspectRatio: "1 / 1",
 
-            objectFit: "cover",
-            objectPosition: "center 46%",
-
             borderRadius: "50%",
-            border: "none",
+            overflow: "hidden",
 
             zIndex: 15,
           }}
-        />
+        >
+          <img
+            src="/yemliha-gerek-profile.jpg"
+            alt="Yemliha Gerek Profil"
+            style={{
+              display: "block",
+              width: "100%",
+              height: "100%",
+
+              objectFit: "cover",
+
+              // Sadece kadraj ayarıdır, fotoğrafı değiştirmez
+              objectPosition: "center 46%",
+            }}
+          />
+        </div>
 
         {/* YEMLİHA GEREK */}
         <a
@@ -127,10 +147,7 @@ export default function Home() {
           }}
         />
 
-        {/*
-          İLETİŞİM ve IBAN şimdilik pasif.
-          Bilgileri verdiğinde aktif edeceğiz.
-        */}
+        {/* İLETİŞİM ve IBAN şimdilik pasif */}
       </div>
     </main>
   );
