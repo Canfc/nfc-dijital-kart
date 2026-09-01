@@ -41,17 +41,19 @@ export default function Home() {
           alt="Yemliha Gerek Profil"
           style={{
             position: "absolute",
-            top: "4.7%",
-            left: "32.5%",
-            width: "35%",
+
+            top: "3.8%",
+            left: "30.8%",
+            width: "38.4%",
             aspectRatio: "1 / 1",
+
             objectFit: "cover",
             objectPosition: "center 46%",
+
             borderRadius: "50%",
-            border: "3px solid #d6a64b",
-            boxShadow:
-              "0 0 10px rgba(214,166,75,0.75), 0 0 25px rgba(214,166,75,0.35)",
-            zIndex: 10,
+            border: "none",
+
+            zIndex: 15,
           }}
         />
 
@@ -124,6 +126,11 @@ export default function Home() {
             zIndex: 20,
           }}
         />
+
+        {/*
+          İLETİŞİM ve IBAN şimdilik pasif.
+          Bilgileri verdiğinde aktif edeceğiz.
+        */}
       </div>
     </main>
   );
