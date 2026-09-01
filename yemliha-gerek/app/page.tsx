@@ -2,26 +2,25 @@ export default function Home() {
   return (
     <main
       style={{
-        position: "fixed",
-        inset: 0,
-        width: "100%",
-        height: "100dvh",
-        overflow: "hidden",
+        margin: 0,
+        minHeight: "100dvh",
         backgroundColor: "#050505",
+        display: "flex",
+        justifyContent: "center",
+        overflow: "hidden",
       }}
     >
       <div
         style={{
           position: "relative",
           width: "100%",
-          height: "100%",
           maxWidth: "430px",
-          margin: "0 auto",
-          overflow: "hidden",
+          aspectRatio: "941 / 1672",
           backgroundColor: "#050505",
+          overflow: "hidden",
         }}
       >
-        {/* ANA ŞABLON */}
+        {/* ANA PANEL */}
         <img
           src="/yemliha-gerek-panel.png"
           alt="Yemliha Gerek"
@@ -30,8 +29,8 @@ export default function Home() {
             inset: 0,
             width: "100%",
             height: "100%",
-            objectFit: "contain",
-            objectPosition: "center top",
+            objectFit: "fill",
+            display: "block",
           }}
         />
 
@@ -39,29 +38,39 @@ export default function Home() {
         <div
           style={{
             position: "absolute",
-            left: "32.6%",
-            top: "5.2%",
-            width: "34.8%",
+
+            // Altın profil çemberinin iç alanı
+            top: "4.7%",
+            left: "32.4%",
+            width: "35.2%",
             aspectRatio: "1 / 1",
+
             borderRadius: "50%",
             overflow: "hidden",
-            zIndex: 15,
+
+            // Paneldeki altın halkayı görünür bırak
+            boxShadow: "0 0 0 2px rgba(215, 165, 75, 0.95)",
+
+            zIndex: 10,
           }}
         >
           <img
             src="/yemliha-gerek-profile.jpg"
-            alt="Yemliha Gerek Profil"
+            alt="Yemliha Gerek"
             style={{
-              display: "block",
               width: "100%",
               height: "100%",
+              display: "block",
+
+              // Fotoğrafın kendisi değişmez,
+              // sadece daire içine kırpılır.
               objectFit: "cover",
-              objectPosition: "center 44%",
+              objectPosition: "center 48%",
             }}
           />
         </div>
 
-        {/* YEMLİHA GEREK INSTAGRAM */}
+        {/* YEMLİHA GEREK */}
         <a
           href="/click?link=yemlihagerek"
           aria-label="Yemliha Gerek Instagram"
@@ -131,7 +140,7 @@ export default function Home() {
           }}
         />
 
-        {/* İLETİŞİM ve IBAN şimdilik pasif */}
+        {/* İletişim ve IBAN şimdilik pasif */}
       </div>
     </main>
   );
