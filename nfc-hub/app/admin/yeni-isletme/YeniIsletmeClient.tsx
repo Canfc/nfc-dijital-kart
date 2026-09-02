@@ -36,8 +36,6 @@ export default function YeniIsletmePage() {
   const [template, setTemplate] =
     useState("Cafe Premium");
 
-  /* FORM DURUMU */
-
   const [isSubmitting, setIsSubmitting] =
     useState(false);
 
@@ -73,7 +71,9 @@ export default function YeniIsletmePage() {
 
   const cards = useMemo(() => {
     return Array.from(
-      { length: cardCount },
+      {
+        length: cardCount,
+      },
       (_, index) => {
         const number =
           String(index + 1).padStart(
@@ -94,7 +94,7 @@ export default function YeniIsletmePage() {
   }, [cardCount, prefix]);
 
   /* =========================
-     İŞLETMEYİ OLUŞTUR
+     İŞLETME OLUŞTUR
   ========================= */
 
   async function handleSubmit(
@@ -288,6 +288,7 @@ export default function YeniIsletmePage() {
           <NavItem
             icon="⌂"
             title="Genel Bakış"
+            href="/admin"
           />
 
           <NavigationTitle
@@ -297,21 +298,25 @@ export default function YeniIsletmePage() {
           <NavItem
             icon="▦"
             title="İşletmeler"
+            href="/admin/isletmeler"
           />
 
           <NavItem
             icon="▭"
             title="Kartlar"
+            href="/admin/kartlar"
           />
 
           <NavItem
             icon="↗"
             title="Yönlendirmeler"
+            href="/admin/yonlendirmeler"
           />
 
           <NavItem
             icon="▥"
             title="İstatistikler"
+            href="/admin/istatistikler"
           />
 
           <NavigationTitle
@@ -321,11 +326,13 @@ export default function YeniIsletmePage() {
           <NavItem
             icon="▦"
             title="QR Kod Üretici"
+            href="/admin/qr"
           />
 
           <NavItem
             icon="↻"
             title="Sayaç Yönetimi"
+            href="/admin/sayac"
           />
 
           <div
@@ -820,7 +827,9 @@ export default function YeniIsletmePage() {
                   oluşturulacaktır.
                 </div>
 
-                {/* SONUÇ MESAJI */}
+                {/* =========================
+                    SONUÇ MESAJI
+                ========================= */}
 
                 {message && (
                   <div
@@ -1343,12 +1352,15 @@ function NavigationTitle({
 function NavItem({
   icon,
   title,
+  href,
 }: {
   icon: string;
   title: string;
+  href: string;
 }) {
   return (
-    <div
+    <a
+      href={href}
       style={{
         display: "flex",
         gap: "11px",
@@ -1357,6 +1369,7 @@ function NavItem({
         fontSize: "12px",
         padding: "10px 9px",
         borderRadius: "10px",
+        textDecoration: "none",
       }}
     >
       <span
@@ -1370,7 +1383,7 @@ function NavItem({
       </span>
 
       {title}
-    </div>
+    </a>
   );
 }
 
