@@ -2,6 +2,10 @@ import type {
   BusinessTemplateProps,
 } from "./types";
 
+import {
+  trackedHref,
+} from "./tracking";
+
 export default function PersonalPremium({
   business,
   card,
@@ -88,6 +92,12 @@ export default function PersonalPremium({
           <LinkButton
             href={
               business.instagram_url
+                ? trackedHref(
+                    business,
+                    "instagram",
+                    card
+                  )
+                : null
             }
             text="Instagram"
           />
@@ -95,6 +105,12 @@ export default function PersonalPremium({
           <LinkButton
             href={
               business.google_url
+                ? trackedHref(
+                    business,
+                    "google",
+                    card
+                  )
+                : null
             }
             text="Google"
           />
@@ -102,6 +118,12 @@ export default function PersonalPremium({
           <LinkButton
             href={
               business.maps_url
+                ? trackedHref(
+                    business,
+                    "konum",
+                    card
+                  )
+                : null
             }
             text="Konum"
           />
@@ -109,7 +131,11 @@ export default function PersonalPremium({
           <LinkButton
             href={
               phone
-                ? `tel:${phone}`
+                ? trackedHref(
+                    business,
+                    "telefon",
+                    card
+                  )
                 : null
             }
             text="Telefon"
@@ -144,15 +170,22 @@ function LinkButton({
     return null;
   }
 
+  const isPhone =
+    href.includes("/telefon");
+
   return (
     <a
       href={href}
       target={
-        href.startsWith("tel:")
+        isPhone
           ? undefined
           : "_blank"
       }
-      rel="noopener noreferrer"
+      rel={
+        isPhone
+          ? undefined
+          : "noopener noreferrer"
+      }
       style={{
         display: "block",
         padding: "15px",

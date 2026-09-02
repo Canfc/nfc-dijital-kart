@@ -2,6 +2,10 @@ import type {
   BusinessTemplateProps,
 } from "./types";
 
+import {
+  trackedHref,
+} from "./tracking";
+
 export default function RestaurantDark({
   business,
   card,
@@ -11,41 +15,6 @@ export default function RestaurantDark({
       /[^0-9+]/g,
       ""
     ) || "";
-
-  const actions = [
-    {
-      title: "Google Yorum",
-      description:
-        "Bizi değerlendirin",
-      href: business.google_url,
-      icon: "★",
-    },
-    {
-      title: "Instagram",
-      description:
-        "Sosyal medyada takip edin",
-      href: business.instagram_url,
-      icon: "◎",
-    },
-    {
-      title: "Konum",
-      description:
-        "Haritalarda görüntüle",
-      href: business.maps_url,
-      icon: "⌖",
-    },
-    {
-      title: "Telefon",
-      description:
-        business.phone,
-      href: phone
-        ? `tel:${phone}`
-        : null,
-      icon: "☎",
-    },
-  ].filter(
-    (item) => item.href
-  );
 
   return (
     <main
@@ -57,6 +26,7 @@ export default function RestaurantDark({
         padding: "40px 16px 60px",
         fontFamily:
           "Georgia, 'Times New Roman', serif",
+        boxSizing: "border-box",
       }}
     >
       <section
@@ -67,12 +37,13 @@ export default function RestaurantDark({
       >
         <div
           style={{
-            border:
-              "1px solid #393939",
+            border: "1px solid #393939",
             padding: "30px 22px",
             background: "#0d0d0d",
           }}
         >
+          {/* BAŞLIK */}
+
           <div
             style={{
               textAlign: "center",
@@ -82,8 +53,7 @@ export default function RestaurantDark({
             <div
               style={{
                 fontSize: "10px",
-                letterSpacing:
-                  ".28em",
+                letterSpacing: ".28em",
                 color: "#9c9c9c",
               }}
             >
@@ -104,8 +74,7 @@ export default function RestaurantDark({
               style={{
                 width: "55px",
                 height: "1px",
-                background:
-                  "#747474",
+                background: "#747474",
                 margin: "15px auto",
               }}
             />
@@ -115,6 +84,7 @@ export default function RestaurantDark({
                 color: "#858585",
                 fontSize: "12px",
                 lineHeight: 1.6,
+                margin: 0,
               }}
             >
               Size daha iyi hizmet
@@ -123,110 +93,180 @@ export default function RestaurantDark({
             </p>
           </div>
 
-          {actions.map(
-            (item) => (
-              <a
-                key={item.title}
-                href={
-                  item.href!
-                }
-                target={
-                  item.href?.startsWith(
-                    "tel:"
-                  )
-                    ? undefined
-                    : "_blank"
-                }
-                rel="noopener noreferrer"
-                style={{
-                  display: "flex",
-                  alignItems:
-                    "center",
-                  gap: "14px",
-                  padding:
-                    "15px 4px",
-                  borderBottom:
-                    "1px solid #292929",
-                  color: "#f2f2f2",
-                  textDecoration:
-                    "none",
-                }}
-              >
-                <span
-                  style={{
-                    width: "28px",
-                    color: "#a6a6a6",
-                  }}
-                >
-                  {item.icon}
-                </span>
+          {/* GOOGLE */}
 
-                <div>
-                  <div
-                    style={{
-                      fontSize:
-                        "14px",
-                    }}
-                  >
-                    {item.title}
-                  </div>
+          {business.google_url && (
+            <RestaurantLink
+              href={trackedHref(
+                business,
+                "google",
+                card
+              )}
+              title="Google Yorum"
+              description="Bizi değerlendirin"
+              icon="★"
+            />
+          )}
 
-                  <div
-                    style={{
-                      color:
-                        "#696969",
-                      fontSize:
-                        "10px",
-                      marginTop:
-                        "3px",
-                    }}
-                  >
-                    {
-                      item.description
-                    }
-                  </div>
-                </div>
+          {/* INSTAGRAM */}
 
-                <span
-                  style={{
-                    marginLeft:
-                      "auto",
-                    color:
-                      "#686868",
-                  }}
-                >
-                  →
-                </span>
-              </a>
-            )
+          {business.instagram_url && (
+            <RestaurantLink
+              href={trackedHref(
+                business,
+                "instagram",
+                card
+              )}
+              title="Instagram"
+              description="Sosyal medyada takip edin"
+              icon="◎"
+            />
+          )}
+
+          {/* KONUM */}
+
+          {business.maps_url && (
+            <RestaurantLink
+              href={trackedHref(
+                business,
+                "konum",
+                card
+              )}
+              title="Konum"
+              description="Haritalarda görüntüle"
+              icon="⌖"
+            />
+          )}
+
+          {/* TELEFON */}
+
+          {phone && (
+            <RestaurantLink
+              href={trackedHref(
+                business,
+                "telefon",
+                card
+              )}
+              title="Telefon"
+              description={business.phone}
+              icon="☎"
+              external={false}
+            />
           )}
         </div>
 
-        <Bottom card={card} />
+        {/* FOOTER */}
+
+        <div
+          style={{
+            textAlign: "center",
+            marginTop: "22px",
+            fontFamily:
+              "Arial, Helvetica, sans-serif",
+            fontSize: "9px",
+            color: "#555555",
+            letterSpacing: ".06em",
+          }}
+        >
+          {card && (
+            <>
+              KART{" "}
+              {card.toUpperCase()}
+              {" · "}
+            </>
+          )}
+
+          NFC HUB
+        </div>
       </section>
     </main>
   );
 }
 
-function Bottom({
-  card,
+function RestaurantLink({
+  href,
+  title,
+  description,
+  icon,
+  external = true,
 }: {
-  card?: string;
+  href: string;
+  title: string;
+  description?: string | null;
+  icon: string;
+  external?: boolean;
 }) {
   return (
-    <div
+    <a
+      href={href}
+      target={
+        external
+          ? "_blank"
+          : undefined
+      }
+      rel={
+        external
+          ? "noopener noreferrer"
+          : undefined
+      }
       style={{
-        textAlign: "center",
-        marginTop: "22px",
-        fontFamily:
-          "Arial, sans-serif",
-        fontSize: "9px",
-        color: "#555",
+        display: "flex",
+        alignItems: "center",
+        gap: "14px",
+        padding: "15px 4px",
+        borderBottom:
+          "1px solid #292929",
+        color: "#f2f2f2",
+        textDecoration: "none",
       }}
     >
-      {card &&
-        `KART ${card.toUpperCase()} · `}
-      NFC HUB
-    </div>
+      <span
+        style={{
+          width: "28px",
+          flexShrink: 0,
+          color: "#a6a6a6",
+          textAlign: "center",
+          fontSize: "17px",
+        }}
+      >
+        {icon}
+      </span>
+
+      <div
+        style={{
+          minWidth: 0,
+        }}
+      >
+        <div
+          style={{
+            fontSize: "14px",
+          }}
+        >
+          {title}
+        </div>
+
+        {description && (
+          <div
+            style={{
+              color: "#696969",
+              fontSize: "10px",
+              marginTop: "3px",
+            }}
+          >
+            {description}
+          </div>
+        )}
+      </div>
+
+      <span
+        style={{
+          marginLeft: "auto",
+          color: "#686868",
+          fontSize: "15px",
+        }}
+      >
+        →
+      </span>
+    </a>
   );
 }

@@ -2,6 +2,10 @@ import type {
   BusinessTemplateProps,
 } from "./types";
 
+import {
+  trackedHref,
+} from "./tracking";
+
 export default function CafePremium({
   business,
   card,
@@ -104,7 +108,11 @@ export default function CafePremium({
 
         {business.google_url && (
           <PremiumButton
-            href={business.google_url}
+            href={trackedHref(
+              business,
+              "google",
+              card
+            )}
             title="Google'da Değerlendir"
             description="Görüşünüz bizim için değerli"
             icon="★"
@@ -114,7 +122,11 @@ export default function CafePremium({
 
         {business.instagram_url && (
           <PremiumButton
-            href={business.instagram_url}
+            href={trackedHref(
+              business,
+              "instagram",
+              card
+            )}
             title="Instagram"
             description="Bizi takip edin"
             icon="◎"
@@ -123,7 +135,11 @@ export default function CafePremium({
 
         {business.maps_url && (
           <PremiumButton
-            href={business.maps_url}
+            href={trackedHref(
+              business,
+              "konum",
+              card
+            )}
             title="Konum"
             description="Yol tarifi alın"
             icon="⌖"
@@ -132,7 +148,11 @@ export default function CafePremium({
 
         {phone && (
           <PremiumButton
-            href={`tel:${phone}`}
+            href={trackedHref(
+              business,
+              "telefon",
+              card
+            )}
             title="Telefon"
             description={business.phone}
             icon="☎"
@@ -270,8 +290,7 @@ function Footer({
             fontSize: "9px",
           }}
         >
-          KART:{" "}
-          {card.toUpperCase()}
+          KART: {card.toUpperCase()}
         </div>
       )}
 

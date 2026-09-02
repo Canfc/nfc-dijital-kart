@@ -2,6 +2,10 @@ import type {
   BusinessTemplateProps,
 } from "./types";
 
+import {
+  trackedHref,
+} from "./tracking";
+
 export default function MinimalBusiness({
   business,
   card,
@@ -21,6 +25,7 @@ export default function MinimalBusiness({
         padding: "55px 18px",
         fontFamily:
           "Arial, Helvetica, sans-serif",
+        boxSizing: "border-box",
       }}
     >
       <section
@@ -32,7 +37,7 @@ export default function MinimalBusiness({
         <div
           style={{
             fontSize: "11px",
-            color: "#777",
+            color: "#777777",
             letterSpacing: ".15em",
           }}
         >
@@ -42,50 +47,63 @@ export default function MinimalBusiness({
         <h1
           style={{
             fontSize: "34px",
-            margin:
-              "12px 0 30px",
-            letterSpacing:
-              "-.04em",
+            margin: "12px 0 30px",
+            letterSpacing: "-.04em",
           }}
         >
           {business.name}
         </h1>
 
-        <MinimalLink
-          href={
-            business.google_url
-          }
-          text="Google'da Değerlendir"
-        />
+        {business.google_url && (
+          <MinimalLink
+            href={trackedHref(
+              business,
+              "google",
+              card
+            )}
+            text="Google'da Değerlendir"
+          />
+        )}
 
-        <MinimalLink
-          href={
-            business.instagram_url
-          }
-          text="Instagram"
-        />
+        {business.instagram_url && (
+          <MinimalLink
+            href={trackedHref(
+              business,
+              "instagram",
+              card
+            )}
+            text="Instagram"
+          />
+        )}
 
-        <MinimalLink
-          href={
-            business.maps_url
-          }
-          text="Konum"
-        />
+        {business.maps_url && (
+          <MinimalLink
+            href={trackedHref(
+              business,
+              "konum",
+              card
+            )}
+            text="Konum"
+          />
+        )}
 
-        <MinimalLink
-          href={
-            phone
-              ? `tel:${phone}`
-              : null
-          }
-          text="Telefon"
-        />
+        {phone && (
+          <MinimalLink
+            href={trackedHref(
+              business,
+              "telefon",
+              card
+            )}
+            text="Telefon"
+            external={false}
+          />
+        )}
 
         <div
           style={{
             marginTop: "38px",
             fontSize: "9px",
-            color: "#aaa",
+            color: "#aaaaaa",
           }}
         >
           {card &&
@@ -100,29 +118,31 @@ export default function MinimalBusiness({
 function MinimalLink({
   href,
   text,
+  external = true,
 }: {
-  href?: string | null;
+  href: string;
   text: string;
+  external?: boolean;
 }) {
-  if (!href) {
-    return null;
-  }
-
   return (
     <a
       href={href}
       target={
-        href.startsWith("tel:")
-          ? undefined
-          : "_blank"
+        external
+          ? "_blank"
+          : undefined
       }
-      rel="noopener noreferrer"
+      rel={
+        external
+          ? "noopener noreferrer"
+          : undefined
+      }
       style={{
         display: "flex",
         justifyContent:
           "space-between",
-        padding:
-          "17px 0",
+        alignItems: "center",
+        padding: "17px 0",
         color: "#151515",
         textDecoration: "none",
         borderBottom:
@@ -131,9 +151,15 @@ function MinimalLink({
         fontWeight: "700",
       }}
     >
-      {text}
+      <span>{text}</span>
 
-      <span>↗</span>
+      <span
+        style={{
+          color: "#777777",
+        }}
+      >
+        ↗
+      </span>
     </a>
   );
 }
